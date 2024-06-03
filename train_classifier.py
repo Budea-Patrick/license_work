@@ -10,8 +10,11 @@ def load_data_from_pickle(filename):
     return data
 
 def prepare_data(data):
-    X = [landmark[:-1] for landmark in data]
-    y = [landmark[-1] for landmark in data]
+    X = []
+    y = []
+    for sequence, label in data:
+        X.append(np.array(sequence).flatten())
+        y.append(label)
     return np.array(X), np.array(y)
 
 def main(pickle_filename='hand_landmarks_data.pkl'):
