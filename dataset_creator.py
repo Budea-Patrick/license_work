@@ -1,5 +1,5 @@
 import cv2 as opencv
-from camera_utils import initialize_camera, display_frame, check_for_quit_key
+from camera_utils import initialize_camera, display_frame
 from hand_landmarks_utils import mp_hands, process_frame, detect_and_draw_hand_landmarks, get_bounding_box_with_padding, save_cropped_hand_image
 from load_symbols import load_symbols
 import os
