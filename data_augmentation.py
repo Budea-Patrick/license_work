@@ -2,7 +2,7 @@ import os
 import cv2 as opencv
 from data_augmentation_utils import augment_image
 
-def augment_dataset(input_dir, output_dir, augmentations_per_image=5):
+def augment_dataset(input_dir, output_dir, augmentations_per_image=3):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
@@ -31,7 +31,7 @@ def augment_dataset(input_dir, output_dir, augmentations_per_image=5):
                         opencv.imwrite(output_path, augmented_image)
                         image_index += 1
 
-def main(input_dir='hand_images', output_dir='augmented_images', augmentations_per_image=5):
+def main(input_dir='hand_images', output_dir='augmented_images', augmentations_per_image=3):
     print(f"Augmenting dataset from {input_dir} and saving to {output_dir} with {augmentations_per_image} augmentations per image...")
     augment_dataset(input_dir, output_dir, augmentations_per_image)
     print("Data augmentation complete.")

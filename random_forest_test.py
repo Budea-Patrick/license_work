@@ -5,18 +5,6 @@ from data_utils import load_model
 import os
 
 def predict_sign(model, landmarks, image_width, image_height):
-    """
-    Predicts the sign and confidence level using the trained model.
-
-    Args:
-        model: Trained classifier model.
-        landmarks (np.ndarray): Array of landmarks with shape (21 * 3, ).
-        image_width (int): Width of the image.
-        image_height (int): Height of the image.
-
-    Returns:
-        tuple: Predicted sign and confidence level.
-    """
     features = extract_features(landmarks, image_width, image_height)
     features = features.reshape(1, -1)
     if features.shape[1] != model.n_features_in_:

@@ -32,12 +32,12 @@ def augment_image(image):
     angle = random.randint(-15, 15)
     rotated = rotate_image(image, angle)
     
-    # Randomly flip the image
-    if random.choice([True, False]):
-        rotated = flip_image(rotated)
-    
     # Randomly add noise
     if random.choice([True, False]):
         rotated = add_noise(rotated)
+
+    # Apply random scaling
+    scale_factor = random.uniform(0.8, 1.2)
+    scaled = scale_image(rotated, scale_factor)
     
-    return rotated
+    return scaled

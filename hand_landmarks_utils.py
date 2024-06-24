@@ -69,7 +69,7 @@ def extract_features(landmarks, image_width, image_height):
     normalized_landmarks = normalize_coordinates(landmarks, image_width, image_height)
     distances = calculate_distances(landmarks)
     angles = calculate_angles(landmarks)
-    return np.concatenate([normalized_landmarks, distances, angles])
+    return np.concatenate([normalized_landmarks])
 
 def detect_and_draw_hand_landmarks(result, frame):
     if result.multi_hand_landmarks:

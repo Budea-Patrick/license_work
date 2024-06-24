@@ -28,7 +28,7 @@ def process_folder(folder_path, hands_model, class_label):
 
 def main(input_base_dir='augmented_images', output_pickle='training_data.pkl'):
         
-    hands_model = mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence = 0.3)
+    hands_model = mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence = 0.4)
     all_features = []
 
     for class_folder in os.listdir(input_base_dir):

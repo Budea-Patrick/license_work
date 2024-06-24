@@ -7,7 +7,7 @@ def load_data(filename):
         data = pickle.load(file)
     return data
 
-def main(input_pickle='training_data.pkl', output_pickle='normalized_data.pkl', image_width=600, image_height=500):
+def main(input_pickle='training_data.pkl', output_pickle='normalized_data.pkl', image_width=1000, image_height=800):
     print("Loading data...")
     data = load_data(input_pickle)
     print("Normalizing data...")

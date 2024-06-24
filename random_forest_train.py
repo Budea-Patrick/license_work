@@ -6,15 +6,6 @@ from sklearn.metrics import classification_report, accuracy_score
 from data_utils import load_model, write_data_to_pickle
 
 def load_normalized_data(filename):
-    """
-    Loads the normalized data from a pickle file.
-
-    Args:
-        filename (str): Path to the pickle file.
-
-    Returns:
-        tuple: Features and labels.
-    """
     with open(filename, 'rb') as file:
         data = pickle.load(file)
     
@@ -23,14 +14,7 @@ def load_normalized_data(filename):
     
     return features, labels
 
-def main(input_pickle='training_data.pkl', model_output='random_forest_model.pkl'):
-    """
-    Main function to train a Random Forest Classifier using the normalized data.
-
-    Args:
-        input_pickle (str): Path to the input pickle file.
-        model_output (str): Path to the output model file.
-    """
+def main(input_pickle='normalized_data.pkl', model_output='random_forest_model.pkl'):
     print("Loading normalized data...")
     features, labels = load_normalized_data(input_pickle)
     
