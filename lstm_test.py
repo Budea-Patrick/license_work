@@ -26,7 +26,7 @@ def predict_sign(model, landmarks, scaler, image_width, image_height, label_map)
     
     return sign, confidence
 
-def main(model_filename='lstm_model.h5', input_pickle='normalized_data.pkl', image_width=600, image_height=500):
+def main(model_filename='lstm_model.h5', input_pickle='normalized_augmented_data.pkl', image_width=1000, image_height=800):
     print("Loading the trained model...")
     model = load_model(model_filename)
 

@@ -1,7 +1,7 @@
 import cv2 as opencv
 import numpy as np
 from hand_landmarks_utils import mp_hands, process_frame, extract_landmarks_sequence, get_bounding_box_with_padding, extract_features
-from data_utils import load_model
+from data_utils import load_data
 import os
 
 def predict_sign(model, landmarks, image_width, image_height):
@@ -15,7 +15,7 @@ def predict_sign(model, landmarks, image_width, image_height):
 
 def main(model_filename='svm_model.pkl', image_width=1000, image_height=800):
     print("Loading the trained model...")
-    model = load_model(model_filename)
+    model = load_data(model_filename)
 
     print("Initializing camera...")
     capture = opencv.VideoCapture(0)
@@ -46,7 +46,7 @@ def main(model_filename='svm_model.pkl', image_width=1000, image_height=800):
 
         opencv.imshow("Sign Language Recognition", frame)
 
-        if opencv.waitKey(1) & 0xFF == ord('q'):
+        if opencv.waitKey(1) & 0xFF == ord('0'):
             break
 
     capture.release()

@@ -1,7 +1,7 @@
 import cv2 as opencv
 import numpy as np
 from hand_landmarks_utils import mp_hands, process_frame, extract_landmarks_sequence, get_bounding_box_with_padding, extract_features
-from data_utils import load_model
+from data_utils import load_data
 import os
 
 def predict_sign(model, landmarks, image_width, image_height):
@@ -13,9 +13,9 @@ def predict_sign(model, landmarks, image_width, image_height):
     confidence = max(model.predict_proba(features)[0])
     return prediction[0], confidence
 
-def main(model_filename='random_forest_model.pkl', image_width=600, image_height=500):
+def main(model_filename='random_forest_model.pkl', image_width=1000, image_height=800):
     print("Loading the trained model...")
-    model = load_model(model_filename)
+    model = load_data(model_filename)
 
     print("Initializing camera...")
     capture = opencv.VideoCapture(0)

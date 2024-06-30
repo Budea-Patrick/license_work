@@ -2,8 +2,8 @@ import cv2 as opencv
 
 def initialize_camera():
     capture = opencv.VideoCapture(0)
-    capture.set(opencv.CAP_PROP_FRAME_WIDTH, 600)
-    capture.set(opencv.CAP_PROP_FRAME_HEIGHT, 500)
+    capture.set(opencv.CAP_PROP_FRAME_WIDTH, 1000)
+    capture.set(opencv.CAP_PROP_FRAME_HEIGHT, 800)
     return capture
 
 def display_frame(window_name, frame):

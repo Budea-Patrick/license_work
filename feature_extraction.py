@@ -1,6 +1,5 @@
 import os
 import cv2 as opencv
-import numpy as np
 from hand_landmarks_utils import mp_hands, process_frame, extract_landmarks_sequence
 from data_utils import write_data_to_pickle
 
@@ -34,7 +33,7 @@ def main(input_base_dir='augmented_images', output_pickle='training_data.pkl'):
     for class_folder in os.listdir(input_base_dir):
         folder_path = os.path.join(input_base_dir, class_folder)
         if os.path.isdir(folder_path):
-            class_label = class_folder  # Assuming folder name is the class label
+            class_label = class_folder
             print(f"Processing folder: {folder_path}")
             class_features = process_folder(folder_path, hands_model, class_label)
             all_features.extend(class_features)

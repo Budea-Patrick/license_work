@@ -10,7 +10,7 @@ def rotate_image(image, angle):
     return rotated
 
 def flip_image(image):
-    return opencv.flip(image, 1)  # Horizontal flip
+    return opencv.flip(image, 1) 
 
 def add_noise(image):
     row, col, ch = image.shape
@@ -41,3 +41,55 @@ def augment_image(image):
     scaled = scale_image(rotated, scale_factor)
     
     return scaled
+
+def rotate_landmarks(landmarks, angle_degrees):
+    angle_radians = np.radians(angle_degrees)
+    rotation_matrix = np.array([
+        [np.cos(angle_radians), -np.sin(angle_radians)],
+        [np.sin(angle_radians), np.cos(angle_radians)]
+    ])
+    rotated_landmarks = []
+    for i in range(0, len(landmarks), 3):
+        x, y, z = landmarks[i], landmarks[i + 1], landmarks[i + 2]
+        rotated_point = np.dot(rotation_matrix, np.array([x, y]))
+        rotated_landmarks.extend([rotated_point[0], rotated_point[1], z])
+    return np.array(rotated_landmarks)
+
+def scale_landmarks(landmarks, scale_factor):
+    return landmarks * scale_factor
+
+def add_noise_to_landmarks(landmarks, noise_level=0.01):
+    noise = np.random.normal(0, noise_level, landmarks.shape)
+    return landmarks + noise
+
+def mirror_landmarks(landmarks, image_width):
+    mirrored_landmarks = []
+    for i in range(0, len(landmarks), 3):
+        x, y, z = landmarks[i], landmarks[i + 1], landmarks[i + 2]
+        mirrored_landmarks.extend([image_width - x, y, z])
+    return np.array(mirrored_landmarks)
+
+def augment_data(data, image_width):
+    augmented_data = []
+    for landmarks, label in data:
+        augmented_data.append((landmarks, label))
+        
+        # Apply rotation
+        for angle in [-15, 0, 15]:
+            rotated_landmarks = rotate_landmarks(landmarks, angle)
+            augmented_data.append((rotated_landmarks, label))
+        
+        # Apply scaling
+        for scale_factor in [0.9, 1.0, 1.1]:
+            scaled_landmarks = scale_landmarks(landmarks, scale_factor)
+            augmented_data.append((scaled_landmarks, label))
+        
+        # Apply noise
+        noisy_landmarks = add_noise_to_landmarks(landmarks)
+        augmented_data.append((noisy_landmarks, label))
+        
+        # Apply mirroring
+        mirrored_landmarks = mirror_landmarks(landmarks, image_width)
+        augmented_data.append((mirrored_landmarks, label))
+        
+    return augmented_data

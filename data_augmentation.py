@@ -19,12 +19,10 @@ def augment_dataset(input_dir, output_dir, augmentations_per_image=3):
                     image_path = os.path.join(class_folder_path, filename)
                     image = opencv.imread(image_path)
                     
-                    # Save the original image
                     output_path = os.path.join(class_output_dir, f"aug_{image_index}.png")
                     opencv.imwrite(output_path, image)
                     image_index += 1
                     
-                    # Create and save augmentations
                     for i in range(augmentations_per_image):
                         augmented_image = augment_image(image)
                         output_path = os.path.join(class_output_dir, f"aug_{image_index}.png")

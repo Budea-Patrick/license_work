@@ -64,7 +64,7 @@ def main(quit_key='q', start_key='a', base_output_dir='hand_images'):
                 extracting, current_class_index, current_class = stop_data_extraction(current_class_index, classes, start_key)
                 if current_class is None:
                     break
-                image_index = 0  # Reset image index for the next class
+                image_index = 0
 
         result = process_frame(frame, hands_model)
         detect_and_draw_hand_landmarks(result, frame)

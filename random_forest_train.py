@@ -2,8 +2,11 @@ import pickle
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, accuracy_score
-from data_utils import load_model, write_data_to_pickle
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, precision_recall_fscore_support, ConfusionMatrixDisplay
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+from data_utils import load_data, write_data_to_pickle
+import time
 
 def load_normalized_data(filename):
     with open(filename, 'rb') as file:
@@ -14,29 +17,69 @@ def load_normalized_data(filename):
     
     return features, labels
 
-def main(input_pickle='normalized_data.pkl', model_output='random_forest_model.pkl'):
+def main(input_pickle='normalized_augmented_data.pkl', model_output='random_forest_model.pkl', eval_output='random_forest_eval.txt'):
     print("Loading normalized data...")
     features, labels = load_normalized_data(input_pickle)
+    
+    # Optionally, apply feature scaling
+    scaler = StandardScaler()
+    features = scaler.fit_transform(features)
     
     print("Splitting data into training and testing sets...")
     X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=42)
     
-    print("Training Random Forest Classifier...")
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
-    model.fit(X_train, y_train)
+    # Initialize RandomForestClassifier with default parameters
+    rf_classifier = RandomForestClassifier(random_state=42)
     
-    print("Evaluating the model...")
-    y_pred = model.predict(X_test)
+    print("Training the RandomForestClassifier...")
+    start_time = time.time()  # Start time for training
     
+    rf_classifier.fit(X_train, y_train)
+    
+    end_time = time.time()  # End time for training
+    training_time = end_time - start_time  # Calculate training time
+    
+    print(f"Training completed in {training_time:.2f} seconds.")
+    
+    # Evaluate the model
+    y_pred = rf_classifier.predict(X_test)
+    
+    # Print classification report
     print("Classification Report:")
     print(classification_report(y_test, y_pred))
     
-    accuracy = accuracy_score(y_test, y_pred)
-    print(f"Model Accuracy: {accuracy * 100:.2f}%")
+    # Print confusion matrix using ConfusionMatrixDisplay
+    cm = confusion_matrix(y_test, y_pred)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=np.unique(labels))
+    fig, ax = plt.subplots(figsize=(10, 10))  # Set the figure size (width, height)
+    disp.plot(ax=ax, cmap=plt.cm.Blues)
+    ax.set_title('Confusion Matrix')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
     
-    print("Saving the trained model...")
+    # Additional metrics
+    precision, recall, fscore, support = precision_recall_fscore_support(y_test, y_pred, average='weighted')
+    accuracy = accuracy_score(y_test, y_pred)
+    
+    # Save evaluation metrics and training time to file
+    with open(eval_output, 'w') as f:
+        f.write("Classification Report:\n")
+        f.write(classification_report(y_test, y_pred) + "\n\n")
+        
+        f.write(f"Model Accuracy: {accuracy * 100:.2f}%\n")
+        f.write(f"Weighted Precision: {precision:.2f}\n")
+        f.write(f"Weighted Recall: {recall:.2f}\n")
+        f.write(f"Weighted F1-score: {fscore:.2f}\n")
+        f.write(f"Support per class: {support}\n")
+        
+        f.write(f"\nTraining Time: {training_time:.2f} seconds\n")
+    
+    print(f"Evaluation metrics and training time saved to {eval_output}")
+    
+    # Save the trained model
     with open(model_output, 'wb') as file:
-        pickle.dump(model, file)
+        pickle.dump(rf_classifier, file)
     
     print(f"Model saved to {model_output}")
 
