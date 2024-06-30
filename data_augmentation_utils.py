@@ -28,19 +28,19 @@ def scale_image(image, scale):
     return scaled
 
 def augment_image(image):
-    # Apply random rotation
+    # rotate
     angle = random.randint(-15, 15)
-    rotated = rotate_image(image, angle)
+    image = rotate_image(image, angle)
     
-    # Randomly add noise
+    # add noise
     if random.choice([True, False]):
-        rotated = add_noise(rotated)
+        image = add_noise(image)
 
-    # Apply random scaling
+    # scaling
     scale_factor = random.uniform(0.8, 1.2)
-    scaled = scale_image(rotated, scale_factor)
+    image = scale_image(image, scale_factor)
     
-    return scaled
+    return image
 
 def rotate_landmarks(landmarks, angle_degrees):
     angle_radians = np.radians(angle_degrees)
@@ -74,12 +74,12 @@ def augment_data(data, image_width):
     for landmarks, label in data:
         augmented_data.append((landmarks, label))
         
-        # Apply rotation
+        # rotate
         for angle in [-15, 0, 15]:
             rotated_landmarks = rotate_landmarks(landmarks, angle)
             augmented_data.append((rotated_landmarks, label))
         
-        # Apply scaling
+        # scale
         for scale_factor in [0.9, 1.0, 1.1]:
             scaled_landmarks = scale_landmarks(landmarks, scale_factor)
             augmented_data.append((scaled_landmarks, label))

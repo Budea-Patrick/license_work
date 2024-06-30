@@ -2,9 +2,8 @@ import cv2 as opencv
 from camera_utils import initialize_camera, display_frame
 from hand_landmarks_utils import mp_hands, process_frame, detect_and_draw_hand_landmarks, extract_landmarks_sequence
 from load_symbols import load_symbols
-import os
+from data_utils import write_data
 import time
-import pickle
 
 def start_data_extraction(current_class):
     print(f"Started data extraction for class {current_class}")
@@ -19,7 +18,7 @@ def stop_data_extraction(current_class_index, classes, start_key):
     print(f"Stopped extraction. Press '{start_key.upper()}' to start extraction for class {current_class}")
     return False, current_class_index, current_class
 
-def handle_extraction(current_class, frame, hands_model, data, start_time):
+def handle_extraction(current_class, frame, hands_model, data, start_time, max_time):
     elapsed_time = time.time() - start_time
     result = process_frame(frame, hands_model)
     if result.multi_hand_landmarks:
@@ -27,11 +26,11 @@ def handle_extraction(current_class, frame, hands_model, data, start_time):
             landmarks = extract_landmarks_sequence(result)
             if landmarks is not None:
                 data.append((landmarks, current_class))
-    if elapsed_time >= 15:
+    if elapsed_time >= max_time:
         return data, False
     return data, True
 
-def main(quit_key='q', start_key='a', output_file='hand_landmarks_data.pkl'):
+def main(quit_key='q', start_key='a', output_file='hand_landmarks_data.pkl', max_time=15):
     capture = initialize_camera()
     hands_model = mp_hands.Hands(max_num_hands=1)
     extracting = False
@@ -54,7 +53,7 @@ def main(quit_key='q', start_key='a', output_file='hand_landmarks_data.pkl'):
             break
 
         if extracting:
-            data, extracting = handle_extraction(current_class, frame, hands_model, data, start_time)
+            data, extracting = handle_extraction(current_class, frame, hands_model, data, start_time, max_time)
             if not extracting:
                 extracting, current_class_index, current_class = stop_data_extraction(current_class_index, classes, start_key)
                 if current_class is None:
@@ -74,8 +73,7 @@ def main(quit_key='q', start_key='a', output_file='hand_landmarks_data.pkl'):
     opencv.destroyAllWindows()
 
     print("Saving collected data...")
-    with open(output_file, 'wb') as file:
-        pickle.dump(data, file)
+    write_data(output_file, data)
     print(f"Data saved to {output_file}")
     print("Data collection complete")
 

@@ -1,7 +1,7 @@
 import os
 import cv2 as opencv
 from hand_landmarks_utils import mp_hands, process_frame, extract_landmarks_sequence
-from data_utils import write_data_to_pickle
+from data_utils import write_data
 
 def extract_features_from_image(image_path, hands_model):
     frame = opencv.imread(image_path)
@@ -38,7 +38,7 @@ def main(input_base_dir='augmented_images', output_pickle='training_data.pkl'):
             class_features = process_folder(folder_path, hands_model, class_label)
             all_features.extend(class_features)
     
-    write_data_to_pickle(output_pickle, all_features)
+    write_data(output_pickle, all_features)
     print(f"Feature extraction complete. Data saved to {output_pickle}")
 
 if __name__ == "__main__":

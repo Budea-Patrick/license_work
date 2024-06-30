@@ -22,9 +22,9 @@ def extract_landmarks_sequence(result):
 
 def normalize_coordinates(landmarks, image_width, image_height):
     landmarks = np.array(landmarks).reshape(-1, 3)
-    wrist = landmarks[0]  # Assuming the wrist is the first landmark
-    landmarks[:, 0] = (landmarks[:, 0] - wrist[0]) / image_width   # Normalize x relative to wrist
-    landmarks[:, 1] = (landmarks[:, 1] - wrist[1]) / image_height  # Normalize y relative to wrist
+    wrist = landmarks[0]  # wrist
+    landmarks[:, 0] = (landmarks[:, 0] - wrist[0]) / image_width
+    landmarks[:, 1] = (landmarks[:, 1] - wrist[1]) / image_height
     return landmarks.flatten()
 
 def get_bounding_box_with_padding(hand_landmarks, frame_shape, padding=50):
@@ -75,7 +75,6 @@ def detect_and_draw_hand_landmarks(result, frame):
     if result.multi_hand_landmarks:
         for hand_landmarks in result.multi_hand_landmarks:
             mp.solutions.drawing_utils.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-
 
 def save_cropped_hand_image(frame, bounding_box, image_index, output_dir):
     x_min, y_min, x_max, y_max = bounding_box

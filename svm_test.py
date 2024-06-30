@@ -1,14 +1,13 @@
 import cv2 as opencv
-import numpy as np
 from hand_landmarks_utils import mp_hands, process_frame, extract_landmarks_sequence, get_bounding_box_with_padding, extract_features
 from data_utils import load_data
-import os
+from camera_utils import initialize_camera
 
 def predict_sign(model, landmarks, image_width, image_height):
     features = extract_features(landmarks, image_width, image_height)
     features = features.reshape(1, -1)
     if features.shape[1] != model.n_features_in_:
-        raise ValueError(f"Expected {model.n_features_in_} features, but got {features.shape[1]} features")
+        raise ValueError(f"Expected {model.n_features_in_} features, got {features.shape[1]}")
     prediction = model.predict(features)
     confidence = max(model.predict_proba(features)[0])
     return prediction[0], confidence
@@ -18,10 +17,7 @@ def main(model_filename='svm_model.pkl', image_width=1000, image_height=800):
     model = load_data(model_filename)
 
     print("Initializing camera...")
-    capture = opencv.VideoCapture(0)
-    capture.set(opencv.CAP_PROP_FRAME_WIDTH, image_width)
-    capture.set(opencv.CAP_PROP_FRAME_HEIGHT, image_height)
-
+    capture = initialize_camera()
     hands_model = mp_hands.Hands(max_num_hands=1)
 
     print("Starting video stream...")

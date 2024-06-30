@@ -16,7 +16,7 @@ def stop_data_extraction(current_class_index, classes, start_key):
     print(f"Stopped extraction. Press '{start_key.upper()}' to start extraction for class {current_class}")
     return False, current_class_index, current_class
 
-def handle_extraction(current_class, frame, hands_model, base_output_dir, image_index):
+def handle_extraction(current_class, frame, hands_model, base_output_dir, image_index, nr_images):
     result = process_frame(frame, hands_model)
     if result.multi_hand_landmarks:
         for hand_landmarks in result.multi_hand_landmarks:
@@ -26,15 +26,14 @@ def handle_extraction(current_class, frame, hands_model, base_output_dir, image_
                 os.makedirs(class_output_dir)
             print(f"Saving image {image_index + 1} for class {current_class}")
             save_cropped_hand_image(frame, bounding_box, image_index, class_output_dir)
-            # Draw bounding box on frame
             x_min, y_min, x_max, y_max = bounding_box
             opencv.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
             image_index += 1
-            if image_index >= 500:  # Stop after 500 images
+            if image_index >= nr_images:
                 return image_index, False
     return image_index, True
 
-def main(quit_key='q', start_key='a', base_output_dir='hand_images'):
+def main(quit_key='q', start_key='a', base_output_dir='hand_images', nr_images = 500):
     if not os.path.exists(base_output_dir):
         os.makedirs(base_output_dir)
         
@@ -59,7 +58,7 @@ def main(quit_key='q', start_key='a', base_output_dir='hand_images'):
             break
 
         if extracting:
-            image_index, extracting = handle_extraction(current_class, frame, hands_model, base_output_dir, image_index)
+            image_index, extracting = handle_extraction(current_class, frame, hands_model, base_output_dir, image_index, nr_images)
             if not extracting:
                 extracting, current_class_index, current_class = stop_data_extraction(current_class_index, classes, start_key)
                 if current_class is None:
