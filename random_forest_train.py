@@ -19,13 +19,20 @@ def main(input='normalized_augmented_data.pkl', model_output='random_forest_mode
     print("Loading normalized data...")
     features, labels = load_normalized_data(input)
     
-    scaler = StandardScaler()
-    features = scaler.fit_transform(features)
+    # scaler = StandardScaler()
+    # features = scaler.fit_transform(features)
     
     print("Splitting data into training and testing sets...")
     X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=42)
     
-    rf_classifier = RandomForestClassifier(random_state=42)
+    rf_classifier = RandomForestClassifier(
+    n_estimators=100,
+    criterion='gini',
+    min_samples_split=2,
+    bootstrap=True,
+    random_state=42
+    )
+
     print("Training the RandomForestClassifier...")
     start_time = time.time()
     rf_classifier.fit(X_train, y_train)
@@ -46,6 +53,16 @@ def main(input='normalized_augmented_data.pkl', model_output='random_forest_mode
     ax.set_title('Confusion Matrix')
     plt.xticks(rotation=45)
     plt.tight_layout()
+    plt.show()
+    
+    # Feature importance plot
+    importances = rf_classifier.feature_importances_
+    indices = np.argsort(importances)[::-1]
+    plt.figure(figsize=(10, 6))
+    plt.title("Feature Importances")
+    plt.bar(range(X_train.shape[1]), importances[indices], align="center")
+    plt.xticks(range(X_train.shape[1]), indices)
+    plt.xlim([-1, X_train.shape[1]])
     plt.show()
     
     # metrics

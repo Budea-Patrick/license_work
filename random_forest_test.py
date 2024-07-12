@@ -1,4 +1,5 @@
 import cv2 as opencv
+import time
 from hand_landmarks_utils import mp_hands, process_frame, extract_landmarks_sequence, get_bounding_box_with_padding, extract_features
 from camera_utils import initialize_camera
 from data_utils import load_data
@@ -8,9 +9,12 @@ def predict_sign(model, landmarks, image_width, image_height):
     features = features.reshape(1, -1)
     if features.shape[1] != model.n_features_in_:
         raise ValueError(f"Expected {model.n_features_in_} features, got {features.shape[1]}")
+    start_time = time.time()  # Start timing
     prediction = model.predict(features)
     confidence = max(model.predict_proba(features)[0])
-    return prediction[0], confidence
+    end_time = time.time()  # End timing
+    latency = end_time - start_time
+    return prediction[0], confidence, latency
 
 def main(model_file='random_forest_model.pkl', image_width=1000, image_height=800):
     print("Loading the trained model...")
@@ -33,10 +37,10 @@ def main(model_file='random_forest_model.pkl', image_width=1000, image_height=80
                 landmarks = extract_landmarks_sequence(result)
                 if landmarks is not None:
                     try:
-                        sign, confidence = predict_sign(model, landmarks, image_width, image_height)
+                        sign, confidence, latency = predict_sign(model, landmarks, image_width, image_height)
                         x_min, y_min, x_max, y_max = get_bounding_box_with_padding(hand_landmarks, frame.shape)
                         opencv.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
-                        text = f'Sign: {sign}, Confidence: {confidence:.2f}'
+                        text = f'Sign: {sign}, Confidence: {confidence:.2f}, Latency: {latency*1000:.2f} ms'
                         opencv.putText(frame, text, (x_min, y_min - 10), opencv.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
                     except ValueError as e:
                         print(f"Error: {e}")

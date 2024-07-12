@@ -22,16 +22,16 @@ def build_model(input_shape, num_classes):
     model = Sequential()
     model.add(Input(shape=input_shape))
     model.add(LSTM(64, return_sequences=True))
-    model.add(Dropout(0.5))  # Increased dropout rate
+    model.add(Dropout(0.5)) 
     model.add(LSTM(64, return_sequences=False))
-    model.add(Dropout(0.5))  # Increased dropout rate
+    model.add(Dropout(0.5))
     model.add(Dense(32, activation='relu'))
     model.add(Dense(num_classes, activation='softmax'))
 
     model.compile(optimizer=Adam(learning_rate=0.001), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     return model
 
-def main(input='normalized_augmented_data.pkl', model_output='lstm_model.h5', eval_output='lstm_eval.txt', num_classes=25):
+def main(input='normalized_augmented_data.pkl', model_output='lstm_model.h5', eval_output='lstm_eval.txt', num_classes=26):
     print("Loading normalized data...")
     features, labels = load_normalized_data(input)
     
@@ -85,6 +85,16 @@ def main(input='normalized_augmented_data.pkl', model_output='lstm_model.h5', ev
     ax.set_title('Confusion Matrix')
     plt.xticks(rotation=45)
     plt.tight_layout()
+    plt.show()
+    
+    # Plotting loss
+    plt.figure(figsize=(10, 5))
+    plt.plot(history.history['loss'], label='Training Loss')
+    plt.plot(history.history['val_loss'], label='Validation Loss')
+    plt.title('Model Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
     plt.show()
     
     print("Saving the trained model...")

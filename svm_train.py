@@ -34,7 +34,7 @@ def main(input='normalized_augmented_data.pkl', model_output='svm_model.pkl', ev
         'svm__kernel': ['rbf', 'linear']
     }
 
-    grid_search = GridSearchCV(pipeline, param_grid, cv=5, verbose=2, n_jobs=-1)
+    grid_search = GridSearchCV(pipeline, param_grid, cv=5, verbose=2, n_jobs=-1, return_train_score=True)
     
     print("Training SVM Classifier with hyperparameter tuning...")
     start_time = time.time()
@@ -73,8 +73,22 @@ def main(input='normalized_augmented_data.pkl', model_output='svm_model.pkl', ev
     plt.tight_layout()
     plt.show()
     
+    # Save the model
     write_data(model_output, best_model)
     print(f"Model saved to {model_output}")
+    
+    # Plotting the validation curve
+    results = grid_search.cv_results_
+    mean_test_scores = results['mean_test_score']
+    
+    plt.figure(figsize=(12, 8))
+    plt.plot(mean_test_scores, label='Mean Test Score', marker='o')
+    plt.xlabel('Hyperparameter combinations')
+    plt.ylabel('Score')
+    plt.title('Validation Curve')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 if __name__ == "__main__":
     main()

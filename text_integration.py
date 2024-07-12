@@ -16,10 +16,8 @@ def predict_sign(model, landmarks, image_width, image_height):
 
 def perform_action(sign, symbols):
     if sign in symbols.values():
-        if sign == "SPACE":
-            pyautogui.typewrite(" ")
-        else:
-            pyautogui.typewrite(sign.lower())
+        pyautogui.typewrite(sign.lower())
+            
 
 def main(model_filename='svm_model.pkl', image_width=1000, image_height=800):
     print("Loading the trained model...")
